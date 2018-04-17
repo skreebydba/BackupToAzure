@@ -1,4 +1,7 @@
-﻿function Backup-SqlDatabaseToAzure {
+﻿<#
+    
+#>
+function Backup-SqlDatabaseToAzure {
   <#
   .SYNOPSIS
   Backup one or more databases from a SQL Server instance to Azure Blob Storage
@@ -11,6 +14,8 @@
   The SQL Server instance to back up from. Just one.
   .PARAMETER container
   The Azure Blob Storage container to backup to.
+  .PARAMETER credential
+  The SQL Server credential used to transfer the backup to Azure Blob storage.
   #>
   [CmdletBinding(SupportsShouldProcess=$True,ConfirmImpact='Low')]
   param
@@ -42,6 +47,7 @@
   )
 
   process {
+
             $date = Get-Date -Format yyyyMMdd_HHmmss;
             $databases = Get-SqlDatabase -ServerInstance $instance | Out-GridView -PassThru | Select-Object -ExpandProperty Name;
 
@@ -49,7 +55,6 @@
             {
                 $backupfile = "$container/$database`_$date.bak";
 
-                #Write-Output $backupfile;
                 Write-Output "Backup starting for " $database;
 
                 Backup-SqlDatabase -ServerInstance $instance `
