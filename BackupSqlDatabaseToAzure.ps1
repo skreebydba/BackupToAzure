@@ -1,5 +1,6 @@
 ﻿<#
-    
+    Created By: Frank Gill, Concurrency, Inc.
+    Create Date: 2018-04-17
 #>
 function Backup-SqlDatabaseToAzure {
   <#
