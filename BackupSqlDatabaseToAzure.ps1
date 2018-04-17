@@ -50,7 +50,7 @@ function Backup-SqlDatabaseToAzure {
   process {
 
             $date = Get-Date -Format yyyyMMdd_HHmmss;
-            $databases = Get-SqlDatabase -ServerInstance $instance | Out-GridView -PassThru | Select-Object -ExpandProperty Name | Where-Object {$_.Name -ne "tempdb"};
+            $databases = Get-SqlDatabase -ServerInstance $instance | Where-Object {$_.Name -ne "tempdb"} | Out-GridView -PassThru | Select-Object -ExpandProperty Name;
 
             foreach($database in $databases)
             {
