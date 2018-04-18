@@ -7,11 +7,19 @@ $ctx = New-AzureStorageContext -StorageAccountName $StorageAccountName -StorageA
 
 $ContainerName = “fbgazurecont”;
 
-$blobs = Get-AzureStorageBlob -Container $ContainerName -Context $ctx | Select -ExpandProperty Name ;
+$blobs = Get-AzureStorageBlob -Container $ContainerName -Context $ctx | Select -Property Name, LastModified ;
 
 $blobs; 
 
+$now = (Get-Date).AddMinutes(-15);
+
+
 foreach($blob in $blobs)
 {
-    Remove-AzureStorageBlob -Blob $Blob -Container $ContainerName -Context $ctx;
+    if($blob.LastModified -lt $now)
+    {
+        Remove-AzureStorageBlob -Blob $Blob.Name -Container $ContainerName -Context $ctx;
+    }
+
+    
 }
