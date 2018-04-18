@@ -9,9 +9,7 @@ $ContainerName = “fbgazurecont”;
 
 $blobs = Get-AzureStorageBlob -Container $ContainerName -Context $ctx | Select -Property Name, LastModified ;
 
-$blobs; 
-
-$now = (Get-Date).AddMinutes(-15);
+$now = (Get-Date).AddDays(-1);
 
 
 foreach($blob in $blobs)
