@@ -1,17 +1,23 @@
-﻿$date = Get-Date -Format yyyyMMdd_HHmmss;
-$credential = "BackupToAzure";
+﻿$credential = 'TestPsCred3';
+$date = Get-Date -Format yyyyMMdd_HHmmss;
 $instance = "cncybook82\dev2017";
 $backuppath = "https://fbgazure.blob.core.windows.net/fbgazurecont";
 $rgname = 'fbgazurerg';
 $storagename = 'fbgazure';
-$credname = 'TestPsCred3';
 $keynum = 'key1'
 
-$key = Get-AzureRmStorageAccountKey -ResourceGroupName $rgname -Name $storagename | Where-Object {$_.KeyName -eq $keynum} | Select-Object -ExpandProperty Value;
+Set-Location SQLSERVER:\SQL\cncybook82\dev2017;
 
-$secretstring = ConvertTo-SecureString $key -AsPlainText -Force;
+$credcheck = Invoke-Sqlcmd -ServerInstance $instance -Database 'master' -Query "SELECT name FROM sys.credentials WHERE name = '$credential';" |Select-Object -ExpandProperty Name;
 
-$credential = New-SqlCredential -Name $credname -Identity $storagename -Secret $secretstring;
+if(!$credcheck)
+{
+    $key = Get-AzureRmStorageAccountKey -ResourceGroupName $rgname -Name $storagename | Where-Object {$_.KeyName -eq $keynum} | Select-Object -ExpandProperty Value;
+
+    $secretstring = ConvertTo-SecureString $key -AsPlainText -Force;
+
+    $credential = New-SqlCredential -Name $credential -Identity $storagename -Secret $secretstring;
+}
 
 $databases = Get-SqlDatabase -ServerInstance $instance | Out-GridView -PassThru | Select-Object -ExpandProperty Name;
 
@@ -29,4 +35,3 @@ foreach($database in $databases)
     -SqlCredential $credential `
     -CompressionOption On;
 }
-
