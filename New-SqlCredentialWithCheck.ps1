@@ -93,7 +93,11 @@ process
 
             $credential = New-SqlCredential -Name $credential -Identity $storagename -Secret $secretstring;
 
-            return $credential;
+            return ($credential.Replace('[','')).Replace(']','');
+        }
+        else
+        {
+            return $Credential;
         }
     }
 }
